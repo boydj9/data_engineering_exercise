@@ -1,14 +1,47 @@
-from cmath import e
 import psycopg2
 import csv
+import os
+from pydantic import BaseModel
+from pydantic import ValidationError
+from datetime import datetime
+from typing import List, Optional
 
-conn = psycopg2.connect(host='localhost', dbname = 'postgres', user='postgres', password='root')
+class Car(BaseModel):
+    hash = ""
+    dealership_id : str
+    vin : str
+    mileage : int
+    is_new : bool
+    stock_number  : str
+    dealer_year : int
+    dealer_make  : str
+    dealer_model  : str
+    dealer_trim  : str
+    dealer_model_number  : str
+    dealer_msrp : int
+    dealer_invoice : int
+    dealer_body  : str
+    dealer_inventory_entry_date : datetime.date
+    dealer_exterior_color_description  : str
+    dealer_interior_color_description  : str
+    dealer_exterior_color_code  : str
+    dealer_interior_color_code  : str
+    dealer_installed_option_codes  : List[str]
+    dealer_installed_option_descriptions : List[str]
+    dealer_additional_specs  : str
+    dealer_doors  : str
+    dealer_drive_type  : str
+    updated_at = datetime.today()
+    dealer_images  : List[str]
+    dealer_certified : bool
+
+SECRETUSER = os.environ['DBUSER']
+SECRETPASS = os.environ['DBPASS']
+conn = psycopg2.connect(host='localhost', dbname = 'postgres', user=SECRETUSER, password=SECRETPASS)
 cur = conn.cursor()
-
-builder()
-readIN("provider1/dealership1.csv", 1)
-readIN("provider2/dealership2.csv", 2)
-
+validRules = [1,2]
+ruleset1 = []
+ruleset2 = []
 
 def builder(): #create table 
     cur.execute("SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name = %s)", ('dealer_data',))
@@ -48,19 +81,33 @@ def builder(): #create table
         """)
         conn.commit()
 
+def checkRow(row,ruleset):
+    if(ruleset not in validRules):
+        print("%d is not a valid Ruleset", int(ruleset))
+        return "INVALID"
+    
+    elif(ruleset == 1):
+        NULLVALS = []
+        for x in range(0,len(row)):
+            if(x == 0)&(not row[x]):
+                continue
+
+
 def readIN(path, ruleset):
     with open(path, 'r') as f:
         reader = csv.reader(f)
-        next(reader)
         for row in reader:
-            if checkRow(row, ruleset) == "insert":
-                cur.execute(
-                    "INSERT INTO accounts VALUES (%s,%s)",
-                    row
-                )
-                conn.commit()
-            elif checkRow(row, ruleset) == "edit":
-                #add options here
-    
-def checkRow(values,ruleset):
-    #add rules in here to check, remember rulesets for different dealers
+            print("%s\n" % row)
+        print("%s read" % path)
+            # if checkRow(row, ruleset) == "INSERT":
+            #     cur.execute(
+            #         "INSERT INTO accounts VALUES (%s,%s)",
+            #         row
+            #     )
+            #     conn.commit()
+            # elif checkRow(row, ruleset) == "UPDATE":
+            #     #add options here
+
+builder()
+readIN("feeds/provider1/dealership1.csv", 1)
+readIN("feeds/provider2/dealership2.csv", 2)
