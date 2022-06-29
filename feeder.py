@@ -1,10 +1,9 @@
 import psycopg2
 import csv
 import os
-from pydantic import BaseModel
-from pydantic import ValidationError
-from datetime import datetime
+from pydantic import BaseModel, ValidationError
 from typing import List, Optional
+from datetime import datetime
 
 class Car(BaseModel):
     hash = ""
@@ -21,7 +20,7 @@ class Car(BaseModel):
     dealer_msrp : int
     dealer_invoice : int
     dealer_body  : str
-    dealer_inventory_entry_date : datetime.date
+    dealer_inventory_entry_date : datetime
     dealer_exterior_color_description  : str
     dealer_interior_color_description  : str
     dealer_exterior_color_code  : str
@@ -29,9 +28,9 @@ class Car(BaseModel):
     dealer_installed_option_codes  : List[str]
     dealer_installed_option_descriptions : List[str]
     dealer_additional_specs  : str
-    dealer_doors  : str
+    dealer_doors  = ''
     dealer_drive_type  : str
-    updated_at = datetime.today()
+    updated_at = datetime.now()
     dealer_images  : List[str]
     dealer_certified : bool
 
@@ -95,10 +94,17 @@ def checkRow(row,ruleset):
 
 def readIN(path, ruleset):
     with open(path, 'r') as f:
-        reader = csv.reader(f)
-        for row in reader:
-            print("%s\n" % row)
-        print("%s read" % path)
+        csvReader = csv.reader(f)
+        headers = next(csvReader)
+        for row in csvReader:
+            mappedRow = {headers[i]: row[i] for i in range(len(headers))}
+            if(ruleset == 1):
+                try:
+                    newCar = Car(dealership_id = mappedRow["Dealer ID"], vin = mappedRow["VIN"], mileage = mappedRow["Miles"], is_new = False if(mappedRow["Type"] == 'Used') else False, stock_number = mappedRow["Stock"], dealer_year = mappedRow["Year"], dealer_make = mappedRow["Make"], dealer_model = mappedRow["Model"], dealer_trim = mappedRow["Trim"], dealer_model_number = mappedRow["ModelNumber"], dealer_msrp = mappedRow["MSRP"] if (mappedRow["Type"] == 'New') else mappedRow["List Price"], dealer_invoice = mappedRow["Invoice"] if (mappedRow["Type"] == 'New') else mappedRow["List Price"], dealer_body = mappedRow["Body"], dealer_inventory_entry_date = datetime.strptime((mappedRow["DateInStock"]), '%m/%d/%Y'), dealer_exterior_color_description = mappedRow["ExteriorColor"], dealer_interior_color_description = mappedRow["InteriorColor"], dealer_exterior_color_code = mappedRow["ExteriorColorCode"], dealer_interior_color_code = mappedRow["InteriorColorCode"], dealer_transmission_name = mappedRow["Transmission"], dealer_installed_option_codes = list(map(str,mappedRow["OptionCode"])), dealer_installed_option_descriptions = list(map(str,mappedRow["OptionDescription"])), dealer_additional_specs = mappedRow["AdditionalSpecs"], dealer_doors = '', dealer_drive_type = mappedRow["Drivetrain"], dealer_images = list(mappedRow["ImageList"].split()), dealer_certified = mappedRow["Certified"])
+                    print("%s\n" %newCar)
+                except ValidationError as e:
+                    print(e.json())
+            
             # if checkRow(row, ruleset) == "INSERT":
             #     cur.execute(
             #         "INSERT INTO accounts VALUES (%s,%s)",
