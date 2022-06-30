@@ -11,12 +11,8 @@ Next in command prompt, run "pip build jacobdataeexercise" to install the requir
 After the dependencies are installed, get the postgres server up and running using "postgres" (recommended to run in another cmd window)
 after the postgres server is running, using the command "python feeder.py" will run the feed
 
-
-
-
-
-
-
+The program will output to either the errorlog.txt file any errors, and any updates will be logged in updatelog.txt
+There is no other outputs, as any outputs are in these files or changes made to the DB
 
 No certified column in dealership 2, defaulting to False
 no list price in dealership 2, defaulting to empty string
