@@ -8,7 +8,7 @@ postgres,psycopg2,csv, os, hashlib, pydantic, datetime, typing
 
 To run the code, download the repository from github either through downloading the zip or enter the command line argument in the desired location: "git clone https://github.com/boydj9/data_engineering_exercise.git"
 Next in command prompt, run "pip build jacobdataeexercise" to install the required dependencies
-After the dependencies are installed, get the postgres server up and running using "postgres -D /usr/local/pgsql/data >logfile 2>&1 &" where user is the name of the logged in user
+After the dependencies are installed, get the postgres server up and running using "postgres" (recommended to run in another cmd window)
 after the postgres server is running, using the command "python feeder.py" will run the feed
 
 
