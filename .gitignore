@@ -1,1 +1,6 @@
 logfile
+db.sql
+Notes.txt
+myapp_db_backup.sql
+feeder.py
+errorlog.txt
