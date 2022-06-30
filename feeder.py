@@ -1,3 +1,7 @@
+#Author - Jacob Boyd
+#Name - feeder.py
+#Summary - sample feed for code interview
+
 import psycopg2
 import csv
 import os
@@ -102,7 +106,7 @@ def builder(): #create table
         """)
         conn.commit()
 
-def checkRow(car):  
+def checkRow(car): #checks db to see if any changes are needed for a given car
     hashVal = car.hash
     selectQuery = "SELECT hash FROM dealer_data WHERE vin = '" + car.vin + "';"
     #print("VIN: %s\nHash: %s" % (car.vin,hashVal))
@@ -146,7 +150,7 @@ def dbCheck(vin):#check to see if vehicle VIN already present in the DB
     else:
         return True
 
-def insertCar(car):
+def insertCar(car):#inserts a row into the table
     cur.execute("INSERT INTO dealer_data (hash,dealership_id ,vin ,mileage ,is_new ,stock_number,dealer_year ,dealer_make,dealer_model,dealer_trim,dealer_model_number,dealer_msrp ,dealer_invoice ,dealer_body,dealer_inventory_entry_date ,dealer_exterior_color_description,dealer_interior_color_description,dealer_exterior_color_code,dealer_interior_color_code,dealer_installed_option_codes,dealer_installed_option_descriptions ,dealer_additional_specs,dealer_doors,dealer_drive_type,updated_at ,dealer_images,dealer_certified) Values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (car.hash,car.dealership_id,car.vin,car.mileage,car.is_new,car.stock_number,car.dealer_year,car.dealer_make,car.dealer_model,car.dealer_trim,car.dealer_model_number,car.dealer_msrp,car.dealer_invoice,car.dealer_body,car.dealer_inventory_entry_date,car.dealer_exterior_color_description,car.dealer_interior_color_description,car.dealer_exterior_color_code,car.dealer_interior_color_code,car.dealer_installed_option_codes,car.dealer_installed_option_descriptions,car.dealer_additional_specs,car.dealer_doors,car.dealer_drive_type,car.updated_at,car.dealer_images,car.dealer_certified))
     conn.commit()
 
