@@ -1,1 +1,12 @@
+As the feeds manipulate and insert the data into the DB, there is little output directly. 
+There are a few cases where outputs will appear: 
+  If a hash difference is detected
+  validation errors
+  
+The Hash difference is when a row in the table needs to be updated, so it will output to updatelog.txt
 
+Validation Errors:
+  With the use of pydantic, much of the validation is built in. There are some custom validators: one that ensures VIN is never empty and one that ensures that the MSRP value will always have a value(if no list price or MSRP will raise an error). 
+  There is a third validator option that has been commented out as a potential future work, which is to check the all values for three SQL keywords (SELECT, INSTERT, DELETE) and raise an error if any of these were found. 
+  If any of these validators raise an error(including the built in validations from pydantic), they will be marked in the errorlog.txt. Currently, the errorlog file gets overwritten at the start of the program, so it will only display the most recent errors(mainly for debugging).
+  If this is not as wanted, then lines 68 and 69 can be commented out to stop overwritting the file. 
